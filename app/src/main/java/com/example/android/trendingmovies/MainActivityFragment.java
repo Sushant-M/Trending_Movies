@@ -8,6 +8,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -25,26 +30,44 @@ public class MainActivityFragment extends Fragment {
     }
 
     final static String TAG = "MainActivityFragment";
+    String movies_data;
+
+    String[] parsedData;
 
     @Override
     public void onStart() {
         super.onStart();
         new getMovies().execute("Hello world");
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_main, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_main, container, false);;
+
+
+
+        return rootView;
     }
 
     public class getMovies extends AsyncTask<String, Void , String[]>{
+
+        @Override
+        protected void onPostExecute(String[] strings) {
+            super.onPostExecute(strings);
+            if(strings != null){
+
+            }
+        }
 
         @Override
         protected String[] doInBackground(String... params) {
 
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
+
+            String[] temp_data = new String[0];
 
             try{
 
@@ -87,16 +110,45 @@ public class MainActivityFragment extends Fragment {
                     // Stream was empty.  No point in parsing.
                     return null;
                 }
-                retrievedInfo = buffer.toString();
-                Log.d(TAG,retrievedInfo);
+                movies_data = buffer.toString();
+                Log.d(TAG,movies_data);
 
             }catch (IOException e){
                 e.printStackTrace();
+            }finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (final IOException e) {
+                        Log.e(TAG, "Error closing stream", e);
+                    }
+                }
             }
 
-
-
-            return new String[0];
+            try {
+                temp_data = parseMoviePosters();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return temp_data;
         }
+    }
+
+    public String[] parseMoviePosters() throws JSONException {
+        String poster ="poster_path";
+        String list = "results";
+        JSONObject moviesOBJ = new JSONObject(movies_data);
+        JSONArray movieArr = moviesOBJ.getJSONArray(list);
+
+        String[] parsedMovies = new String[20];
+        for(int i =0 ; i<movieArr.length(); i++){
+            JSONObject obj = movieArr.getJSONObject(i);
+            String posterparse = obj.getString(poster);
+            parsedMovies[i] = posterparse;
+        }
+        return parsedMovies;
     }
 }
