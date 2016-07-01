@@ -58,8 +58,6 @@ public class MainActivityFragment extends Fragment {
         new getMovies().execute("Hello world");
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         gridView = (GridView) rootView.findViewById(R.id.movies_gridview);
-
-
         return rootView;
     }
 
