@@ -2,4 +2,6 @@
     <string name="app_name">Trending Movies</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_settings">SettingsActivity</string>
+    <string name="sort_movie">sort_movie</string>
+    <string name="refresh_value">Refresh</string>
 </resources>

@@ -1,12 +1,18 @@
 package com.example.android.trendingmovies;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -40,6 +46,12 @@ public class MainActivityFragment extends Fragment {
     String movies_data;
     String[] parsedData;
 
+    public void updateMovies(){
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String value = sharedPreferences.getString("sort_movie","popular");
+        new getMovies().execute(value);
+    }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -49,13 +61,32 @@ public class MainActivityFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.moviesfragment,menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if(id == R.id.action_settings1){
+            Intent intent = new Intent(getActivity(),SettingsActivity.class);
+            startActivity(intent);
+        }
+        if(id == R.id.action_refresh){
+            updateMovies();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        new getMovies().execute("Hello world");
+        updateMovies();
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         gridView = (GridView) rootView.findViewById(R.id.movies_gridview);
         return rootView;
@@ -78,6 +109,7 @@ public class MainActivityFragment extends Fragment {
 
             String[] temp_data = new String[0];
 
+
             try{
 
                 final String baseQuery = "http://api.themoviedb.org/3";
@@ -86,11 +118,13 @@ public class MainActivityFragment extends Fragment {
                 final String top_rated = "top_rated";
                 final String api_param = "api_key";
                 final String API_KEY ="fc53fdb027975aaacc7595aeb259107d" ;
-                String retrievedInfo;
+
+                String type = params[0];
+                Log.d(TAG,type);
 
                 Uri builtUri = Uri.parse(baseQuery).buildUpon()
                         .appendEncodedPath(movies)
-                        .appendEncodedPath(popular)
+                        .appendEncodedPath(type)
                         .appendQueryParameter(api_param,API_KEY)
                         .build();
                 URL url = new URL(builtUri.toString());
