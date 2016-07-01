@@ -2,13 +2,19 @@ package com.example.android.trendingmovies;
 
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.GridView;
+import android.widget.Toast;
+
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,26 +32,32 @@ import java.net.URL;
  */
 public class MainActivityFragment extends Fragment {
 
+    GridView gridView;
     public MainActivityFragment() {
     }
 
     final static String TAG = "MainActivityFragment";
     String movies_data;
-
     String[] parsedData;
 
     @Override
     public void onStart() {
         super.onStart();
-        new getMovies().execute("Hello world");
+
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);;
-
+        new getMovies().execute("Hello world");
+        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        gridView = (GridView) rootView.findViewById(R.id.movies_gridview);
 
 
         return rootView;
@@ -56,9 +68,8 @@ public class MainActivityFragment extends Fragment {
         @Override
         protected void onPostExecute(String[] strings) {
             super.onPostExecute(strings);
-            if(strings != null){
-
-            }
+            parsedData = strings;
+            gridView.setAdapter(new ImageAdapter(getActivity(),parsedData));
         }
 
         @Override
