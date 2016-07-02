@@ -45,7 +45,10 @@ public class MainActivityFragment extends Fragment {
     final static String TAG = "MainActivityFragment";
     String movies_data;
     String[] parsedData;
-    String[] movieIdToSend;
+    String[] movieTitleToSend;
+    String[] movieOverViewToSend;
+    String[] movieReleaseDate;
+    String[] movieRating;
 
     public void updateMovies(){
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -94,7 +97,21 @@ public class MainActivityFragment extends Fragment {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getActivity(),DetailActivity.class).putExtra(Intent.EXTRA_TEXT,movieIdToSend[position]);
+                Bundle bundle = new Bundle();
+
+                String im = "image";
+                String over = "overview";
+                String rel = "release";
+                String title = "title";
+                String rating = "rating";
+
+                bundle.putString(im,parsedData[position]);
+                bundle.putString(over,movieOverViewToSend[position]);
+                bundle.putString(rel,movieReleaseDate[position]);
+                bundle.putString(title,movieTitleToSend[position]);
+                bundle.putString(rating,movieRating[position]);
+                Intent intent = new Intent(getActivity(),DetailActivity.class);
+                intent.putExtras(bundle);
                 startActivity(intent);
             }
         });
@@ -110,10 +127,14 @@ public class MainActivityFragment extends Fragment {
             parsedData = strings;
             gridView.setAdapter(new ImageAdapter(getActivity(),parsedData));
             try {
-                movieIdToSend = parseMovieID();
+                movieTitleToSend = parseMovieTitle();
+                movieOverViewToSend = parseMovieOverView();
+                movieReleaseDate = parseMovieReleaseDate();
+                movieRating = parseMovieRating();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
         }
 
         @Override
@@ -207,17 +228,57 @@ public class MainActivityFragment extends Fragment {
         return parsedMovies;
     }
 
-    public String[] parseMovieID() throws JSONException {
+    public String[] parseMovieTitle() throws JSONException {
         String list = "results";
-        String id = "id";
+        String id = "original_title";
         JSONObject moviesOBJ = new JSONObject(movies_data);
         JSONArray movieArr = moviesOBJ.getJSONArray(list);
-        String[] movieID = new String[20];
+        String[] MovieTitle = new String[20];
         for(int i =0 ; i<movieArr.length(); i++){
             JSONObject obj = movieArr.getJSONObject(i);
             String posterparse = obj.getString(id);
-            movieID[i] = posterparse;
+            MovieTitle[i] = posterparse;
         }
-        return movieID;
+        return MovieTitle;
+    }
+    public String[] parseMovieOverView() throws JSONException {
+        String list = "results";
+        String id = "overview";
+        JSONObject moviesOBJ = new JSONObject(movies_data);
+        JSONArray movieArr = moviesOBJ.getJSONArray(list);
+        String[] MovieOverView = new String[20];
+        for(int i =0 ; i<movieArr.length(); i++){
+            JSONObject obj = movieArr.getJSONObject(i);
+            String posterparse = obj.getString(id);
+            MovieOverView[i] = posterparse;
+        }
+        return MovieOverView;
+    }
+
+    public String[] parseMovieReleaseDate() throws JSONException {
+        String list = "results";
+        String id = "release_date";
+        JSONObject moviesOBJ = new JSONObject(movies_data);
+        JSONArray movieArr = moviesOBJ.getJSONArray(list);
+        String[] MovieReleaseDate = new String[20];
+        for(int i =0 ; i<movieArr.length(); i++){
+            JSONObject obj = movieArr.getJSONObject(i);
+            String posterparse = obj.getString(id);
+            MovieReleaseDate[i] = posterparse;
+        }
+        return MovieReleaseDate;
+    }
+    public String[] parseMovieRating() throws JSONException {
+        String list = "results";
+        String id = "vote_average";
+        JSONObject moviesOBJ = new JSONObject(movies_data);
+        JSONArray movieArr = moviesOBJ.getJSONArray(list);
+        String[] MovieRating = new String[20];
+        for(int i =0 ; i<movieArr.length(); i++){
+            JSONObject obj = movieArr.getJSONObject(i);
+            String posterparse = obj.getString(id);
+            MovieRating[i] = posterparse;
+        }
+        return MovieRating;
     }
 }
