@@ -151,7 +151,8 @@ public class MainActivityFragment extends Fragment {
                 final String baseQuery = "http://api.themoviedb.org/3";
                 final String movies = "movie";
                 final String api_param = "api_key";
-                final String API_KEY ="fc53fdb027975aaacc7595aeb259107d" ;
+                //Insert your API key here.
+                final String API_KEY ="" ;
 
                 String type = params[0];
                 Log.d(TAG,type);
