@@ -152,10 +152,9 @@ public class MainActivityFragment extends Fragment {
                 final String movies = "movie";
                 final String api_param = "api_key";
                 //Insert your API key here.
-                final String API_KEY ="" ;
+                final String API_KEY ="fc53fdb027975aaacc7595aeb259107d" ;
 
                 String type = params[0];
-                Log.d(TAG,type);
 
                 Uri builtUri = Uri.parse(baseQuery).buildUpon()
                         .appendEncodedPath(movies)
@@ -189,7 +188,6 @@ public class MainActivityFragment extends Fragment {
                     return null;
                 }
                 movies_data = buffer.toString();
-                Log.d(TAG,movies_data);
 
             }catch (IOException e){
                 e.printStackTrace();
