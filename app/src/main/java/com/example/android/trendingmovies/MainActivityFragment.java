@@ -1,7 +1,10 @@
 package com.example.android.trendingmovies;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
@@ -55,6 +58,7 @@ public class MainActivityFragment extends Fragment {
         String value = sharedPreferences.getString("sort_movie","popular");
         new getMovies().execute(value);
     }
+
 
     @Override
     public void onStart() {
