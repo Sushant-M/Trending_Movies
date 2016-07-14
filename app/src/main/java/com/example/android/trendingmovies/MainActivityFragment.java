@@ -7,6 +7,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -52,6 +54,7 @@ public class MainActivityFragment extends Fragment {
     String[] movieOverViewToSend;
     String[] movieReleaseDate;
     String[] movieRating;
+    String[] movieID;
 
     public void updateMovies(){
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -156,7 +159,7 @@ public class MainActivityFragment extends Fragment {
                 final String movies = "movie";
                 final String api_param = "api_key";
                 //Insert your API key here.
-                final String API_KEY ="" ;
+                final String API_KEY ="fc53fdb027975aaacc7595aeb259107d" ;
 
                 String type = params[0];
 
@@ -284,4 +287,18 @@ public class MainActivityFragment extends Fragment {
         }
         return MovieRating;
     }
+    public String[] parseMovieID() throws JSONException{
+        String list = "results";
+        String id = "id";
+        JSONObject moviesOBJ = new JSONObject(movies_data);
+        JSONArray movieArr = moviesOBJ.getJSONArray(list);
+        String[] MovieID = new String[20];
+        for(int i=0; i>movieArr.length();i++){
+            JSONObject obj = movieArr.getJSONObject(i);
+            String movieID = obj.getString(id);
+            MovieID[i] = movieID;
+        }
+        return movieID;
+    }
+
 }
