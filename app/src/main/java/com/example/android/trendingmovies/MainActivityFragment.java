@@ -111,12 +111,14 @@ public class MainActivityFragment extends Fragment {
                 String rel = "release";
                 String title = "title";
                 String rating = "rating";
+                String ID = "id";
 
                 bundle.putString(im,parsedData[position]);
                 bundle.putString(over,movieOverViewToSend[position]);
                 bundle.putString(rel,movieReleaseDate[position]);
                 bundle.putString(title,movieTitleToSend[position]);
                 bundle.putString(rating,movieRating[position]);
+                bundle.putString(ID,movieID[position]);
                 Intent intent = new Intent(getActivity(),DetailActivity.class);
                 intent.putExtras(bundle);
                 startActivity(intent);
@@ -138,6 +140,7 @@ public class MainActivityFragment extends Fragment {
                 movieOverViewToSend = parseMovieOverView();
                 movieReleaseDate = parseMovieReleaseDate();
                 movieRating = parseMovieRating();
+                movieID = parseMovieID();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -287,18 +290,19 @@ public class MainActivityFragment extends Fragment {
         }
         return MovieRating;
     }
-    public String[] parseMovieID() throws JSONException{
+    public String[] parseMovieID() throws JSONException {
         String list = "results";
         String id = "id";
         JSONObject moviesOBJ = new JSONObject(movies_data);
         JSONArray movieArr = moviesOBJ.getJSONArray(list);
         String[] MovieID = new String[20];
-        for(int i=0; i>movieArr.length();i++){
+        for(int i =0 ; i<movieArr.length(); i++){
             JSONObject obj = movieArr.getJSONObject(i);
-            String movieID = obj.getString(id);
-            MovieID[i] = movieID;
+            String idparse = obj.getString(id);
+            MovieID[i] = idparse;
         }
-        return movieID;
+        return MovieID;
     }
+
 
 }
