@@ -55,6 +55,7 @@
         android:layout_height="wrap_content"
         android:text="Press Here"
         android:id="@+id/trailer"
+        android:onClick="launchYoutube"
         android:layout_below="@+id/movie_OverView"/>
 
 

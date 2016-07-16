@@ -27,10 +27,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 public class DetailActivity extends AppCompatActivity {
     String youTubeURL = null;
+    String tempdata = null;
     final String TAG="DetailActivity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +61,6 @@ public class DetailActivity extends AppCompatActivity {
 
         new getYoutubeLink().execute(MovieID);
 
-
         Context context = getApplicationContext();
         final String BASE_URL = "http://image.tmdb.org/t/p/.";
         final String SIZE_POSTER = "w185";
@@ -78,12 +79,27 @@ public class DetailActivity extends AppCompatActivity {
         movie_rating.setText("Rating: "+Movie_Rating);
     }
 
+    public void launchYoutube(View view) throws MalformedURLException {
+
+        //Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        //intent.setDataAndType(uri, "video/*");
+        //startActivity(intent);
+
+    }
 
     public class getYoutubeLink extends AsyncTask<String,Void,String>{
 
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
+            String BASEURI = "http://www.youtube.com";
+            String WATCH = "watch";
+            String TOAPPEND = "v=";
+            Uri uri = Uri.parse(BASEURI).buildUpon()
+                    .appendQueryParameter(WATCH,TOAPPEND)
+                    .build();
+            Log.d(TAG,uri.toString());
+
 
         }
 
@@ -94,7 +110,6 @@ public class DetailActivity extends AppCompatActivity {
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
 
-            String tempdata = null;
 
             try{
                 final String BASEURL = "http://api.themoviedb.org/3";
@@ -138,7 +153,6 @@ public class DetailActivity extends AppCompatActivity {
                     return null;
                 }
                 youTubeURL = buffer.toString();
-                Log.d(TAG,youTubeURL);
             }catch (IOException e){
             e.printStackTrace();
              }finally {
@@ -158,7 +172,6 @@ public class DetailActivity extends AppCompatActivity {
             }catch (JSONException e){
                 e.printStackTrace();
             }
-            Log.d(TAG,tempdata);
             return tempdata;
         }
     }
