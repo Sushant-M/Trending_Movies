@@ -46,12 +46,15 @@
         android:id="@+id/movie_OverView"
         android:layout_below="@+id/movie_release"
         android:layout_margin="@dimen/fab_margin"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/test"/>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Press Here"
         android:id="@+id/trailer"
-        android:onClick="OnTrailerClicked"
         android:layout_below="@+id/movie_OverView"/>
 
 
