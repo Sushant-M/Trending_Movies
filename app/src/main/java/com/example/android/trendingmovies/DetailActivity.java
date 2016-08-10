@@ -1,5 +1,6 @@
 package com.example.android.trendingmovies;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -34,6 +35,9 @@ public class DetailActivity extends AppCompatActivity {
     String youTubeURL = null;
     String tempdata = null;
     final String TAG="DetailActivity";
+    Uri uri;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,11 +83,16 @@ public class DetailActivity extends AppCompatActivity {
         movie_rating.setText("Rating: "+Movie_Rating);
     }
 
-    public void launchYoutube(View view) throws MalformedURLException {
+    public void launchYoutube(View view) {
 
-        //Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-        //intent.setDataAndType(uri, "video/*");
-        //startActivity(intent);
+        try {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube.com:" + tempdata));
+            startActivity(intent);
+        } catch (ActivityNotFoundException ex) {
+            Intent intent = new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("http://www.youtube.com/watch?v=" + tempdata));
+            startActivity(intent);
+        }
 
     }
 
@@ -92,14 +101,13 @@ public class DetailActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            String BASEURI = "http://www.youtube.com";
+            String BASEURI = "http://www.youtube.com/watch?v=";
             String WATCH = "watch";
             String TOAPPEND = "v=";
             Uri uri = Uri.parse(BASEURI).buildUpon()
-                    .appendQueryParameter(WATCH,TOAPPEND)
+                    .appendEncodedPath(tempdata)
                     .build();
             Log.d(TAG,uri.toString());
-
 
         }
 
@@ -172,6 +180,7 @@ public class DetailActivity extends AppCompatActivity {
             }catch (JSONException e){
                 e.printStackTrace();
             }
+            Log.d(TAG,tempdata);
             return tempdata;
         }
     }
