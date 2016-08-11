@@ -35,8 +35,6 @@ public class DetailActivity extends AppCompatActivity {
     String youTubeURL = null;
     String tempdata = null;
     final String TAG="DetailActivity";
-    Uri uri;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,13 +99,6 @@ public class DetailActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            String BASEURI = "http://www.youtube.com/watch?v=";
-            String WATCH = "watch";
-            String TOAPPEND = "v=";
-            Uri uri = Uri.parse(BASEURI).buildUpon()
-                    .appendEncodedPath(tempdata)
-                    .build();
-            Log.d(TAG,uri.toString());
 
         }
 
@@ -180,7 +171,6 @@ public class DetailActivity extends AppCompatActivity {
             }catch (JSONException e){
                 e.printStackTrace();
             }
-            Log.d(TAG,tempdata);
             return tempdata;
         }
     }
