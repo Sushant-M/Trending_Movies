@@ -14,7 +14,7 @@ public class MovieDatabase extends SQLiteOpenHelper {
     private static final String COMMA_SEP = ",";
 
     private static final String CREATE_TABLE =
-            "CREATE TABLE" + MovieContract.TABLE_NAME + " ("
+            "CREATE TABLE " + MovieContract.TABLE_NAME + " ("
             + MovieContract._ID + " INTEGER PRIMARY KEY,"
             + MovieContract.COLUMN_MOVIE_NAME + TEXT_TYPE +COMMA_SEP
             + MovieContract.COLUMN_MOVIE_POSTER + TEXT_TYPE + COMMA_SEP
@@ -22,6 +22,8 @@ public class MovieDatabase extends SQLiteOpenHelper {
             + MovieContract.COLUMN_MOVIE_REVIEW + TEXT_TYPE + COMMA_SEP
             + MovieContract.COLUMN_SYNOPSIS + TEXT_TYPE + COMMA_SEP
             + MovieContract.COLUMN_YOUTUBE_LINK + TEXT_TYPE + COMMA_SEP
+            + MovieContract.COLUMN_MOVIE_RELEASE + TEXT_TYPE +COMMA_SEP
+            + MovieContract.COLUMN_MOVIE_ID + TEXT_TYPE
             + " )";
 
     private static final String DELETE_TABLE =

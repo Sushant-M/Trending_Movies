@@ -1,8 +1,11 @@
 package com.example.android.trendingmovies;
 
 import android.content.ActivityNotFoundException;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -17,6 +20,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.android.trendingmovies.data.MovieContract;
+import com.example.android.trendingmovies.data.MovieDatabase;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -35,6 +40,14 @@ public class DetailActivity extends AppCompatActivity {
     String youTubeURL = null;
     String tempdata = null;
     final String TAG="DetailActivity";
+    private boolean toggle_bool = false;
+    String Title;
+    String Image_Path;
+    String Movie_OverView;
+    String Movie_Release;
+    String Movie_Rating;
+    String MovieID;
+    ContentValues contentValues =  new ContentValues();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,12 +59,21 @@ public class DetailActivity extends AppCompatActivity {
         Intent intent = this.getIntent();
         Bundle bundle = intent.getExtras();
 
-        String Title = bundle.getString("title");
-        String Image_Path = bundle.getString("image");
-        String Movie_OverView = bundle.getString("overview");
-        String Movie_Release = bundle.getString("release");
-        String Movie_Rating = bundle.getString("rating");
-        String MovieID = bundle.getString("id");
+        Title = bundle.getString("title");
+        Image_Path = bundle.getString("image");
+        Movie_OverView = bundle.getString("overview");
+        Movie_Release = bundle.getString("release");
+        Movie_Rating = bundle.getString("rating");
+        MovieID = bundle.getString("id");
+
+        contentValues.put(MovieContract.COLUMN_MOVIE_NAME,Title);
+        contentValues.put(MovieContract.COLUMN_MOVIE_POSTER,Image_Path);
+        contentValues.put(MovieContract.COLUMN_MOVIE_RATING,Movie_Rating);
+        // to be added later contentValues.put(MovieContract.COLUMN_MOVIE_REVIEW,"review goes here");
+        contentValues.put(MovieContract.COLUMN_SYNOPSIS,Movie_OverView);
+        //to be added later contentValues.put(MovieContract.COLUMN_YOUTUBE_LINK,tempdata);
+        contentValues.put(MovieContract.COLUMN_MOVIE_RELEASE,Movie_Release);
+        contentValues.put(MovieContract.COLUMN_MOVIE_ID,MovieID);
 
 
         ImageView imageView = (ImageView)findViewById(R.id.movieImage);
@@ -59,7 +81,6 @@ public class DetailActivity extends AppCompatActivity {
         TextView movie_release = (TextView)findViewById(R.id.movie_release);
         TextView movie_overview = (TextView)findViewById(R.id.movie_OverView);
         TextView movie_rating = (TextView)findViewById(R.id.movie_rating);
-        Button trailer_button = (Button)findViewById(R.id.trailer);
 
         new getYoutubeLink().execute(MovieID);
 
@@ -81,6 +102,22 @@ public class DetailActivity extends AppCompatActivity {
         movie_rating.setText("Rating: "+Movie_Rating);
     }
 
+    public void toggleFav(View view){
+        TextView textView = (TextView)findViewById(R.id.toggle);
+
+        toggle_bool = !toggle_bool;
+        if(toggle_bool == true){
+            textView.setText("True");
+            //add entry to database
+            new AddEntry().execute(contentValues);
+
+        }else if(toggle_bool == false){
+            textView.setText("False");
+            //delete entry from database
+        }
+    }
+
+
     public void launchYoutube(View view) {
 
         try {
@@ -99,16 +136,12 @@ public class DetailActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-
         }
 
         @Override
         protected String doInBackground(String... params) {
-
-
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
-
 
             try{
                 final String BASEURL = "http://api.themoviedb.org/3";
@@ -186,4 +219,26 @@ public class DetailActivity extends AppCompatActivity {
         return posterparse;
     }
 
+    //public class DeleteEntry extends AsyncTask<int,Void,Void>{
+
+    //}
+
+
+
+
+    public class AddEntry extends AsyncTask<ContentValues,Void,Long>{
+
+        @Override
+        protected Long doInBackground(ContentValues... params) {
+            SQLiteOpenHelper mHelper = new MovieDatabase(getApplicationContext());
+            SQLiteDatabase db = mHelper.getWritableDatabase();
+            long number = db.insert(
+                    MovieContract.TABLE_NAME,
+                    null,
+                    params[0]
+            );
+            Log.d(TAG,Long.toString(number));
+            return number;
+        }
+    }
 }
