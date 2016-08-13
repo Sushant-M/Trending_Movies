@@ -70,6 +70,11 @@
         android:id="@+id/toggle"
         android:layout_below="@+id/toggleButton"
         android:text="Not in fav"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toggle"
+        android:id="@+id/review_textview"/>
 
 
 </RelativeLayout>

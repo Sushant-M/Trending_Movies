@@ -82,7 +82,12 @@ public class DetailActivity extends AppCompatActivity {
         TextView movie_overview = (TextView)findViewById(R.id.movie_OverView);
         TextView movie_rating = (TextView)findViewById(R.id.movie_rating);
 
-        new getYoutubeLink().execute(MovieID);
+        String gottenreview = null;
+        new GetReview().execute(MovieID,null,gottenreview);
+
+
+
+        new GetYoutubeLink().execute(MovieID);
 
         Context context = getApplicationContext();
         final String BASE_URL = "http://image.tmdb.org/t/p/.";
@@ -114,6 +119,7 @@ public class DetailActivity extends AppCompatActivity {
         }else if(toggle_bool == false){
             textView.setText("False");
             //delete entry from database
+            new DeleteEntry().execute(MovieID);
         }
     }
 
@@ -131,7 +137,93 @@ public class DetailActivity extends AppCompatActivity {
 
     }
 
-    public class getYoutubeLink extends AsyncTask<String,Void,String>{
+    public class GetReview extends AsyncTask<String,Void,String>{
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            TextView movie_review = (TextView)findViewById(R.id.review_textview);
+            movie_review.setText(s);
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            HttpURLConnection urlConnection = null;
+            BufferedReader reader = null;
+            String reviewJSON = null;
+            try{
+                final String BASEURL = "http://api.themoviedb.org/3";
+                final String MOVIES = "movie";
+                final String REVIEW = "reviews";
+                final String APIPARAM = "api_key";
+                final String APIKEY = "fc53fdb027975aaacc7595aeb259107d";
+                String movID = params[0];
+
+                Uri builtUri = Uri.parse(BASEURL).buildUpon()
+                        .appendEncodedPath(MOVIES)
+                        .appendEncodedPath(movID)
+                        .appendEncodedPath(REVIEW)
+                        .appendQueryParameter(APIPARAM,APIKEY)
+                        .build();
+
+                URL url = new URL(builtUri.toString());
+
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.connect();
+                // Read the input stream into a String
+                InputStream inputStream = urlConnection.getInputStream();
+                StringBuffer buffer = new StringBuffer();
+
+                if (inputStream == null) {
+                    // Nothing to do.
+                    return null;
+                }
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
+                    // But it does make debugging a *lot* easier if you print out the completed
+                    // buffer for debugging.
+                    buffer.append(line + "\n");
+                }
+
+                if (buffer.length() == 0) {
+                    // Stream was empty.  No point in parsing.
+                    return null;
+                }
+                reviewJSON = buffer.toString();
+            }catch (IOException e){
+                e.printStackTrace();
+            }finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (final IOException e) {
+                        Log.e(TAG, "Error closing stream", e);
+                    }
+                }
+            }
+            try{
+                String review = parseReview(reviewJSON);
+                return review;
+            }catch (JSONException e){
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+
+
+
+
+
+
+    public class GetYoutubeLink extends AsyncTask<String,Void,String>{
 
         @Override
         protected void onPostExecute(String s) {
@@ -208,6 +300,18 @@ public class DetailActivity extends AppCompatActivity {
         }
     }
 
+    public String parseReview(String json) throws JSONException{
+        String list = "results";
+        String id = "content";
+        JSONObject moviesOBJ = new JSONObject(json);
+        JSONArray movieArr = moviesOBJ.getJSONArray(list);
+        int i = 0;
+        JSONObject obj = movieArr.getJSONObject(i);
+        String review = obj.getString(id);
+        return review;
+    }
+
+
     public String parseYoutubePath() throws JSONException {
         String list = "results";
         String id = "key";
@@ -219,12 +323,18 @@ public class DetailActivity extends AppCompatActivity {
         return posterparse;
     }
 
-    //public class DeleteEntry extends AsyncTask<int,Void,Void>{
-
-    //}
-
-
-
+    public class DeleteEntry extends AsyncTask<String,Void,Void>{
+        @Override
+        protected Void doInBackground(String... params) {
+            SQLiteOpenHelper sqLiteOpenHelper = new MovieDatabase(getApplicationContext());
+            SQLiteDatabase db = sqLiteOpenHelper.getWritableDatabase();
+            String TABLENAME = MovieContract.TABLE_NAME;
+            String selection = MovieContract.COLUMN_MOVIE_ID + " LIKE ?";
+            String[] selectionargs = { params[0] };
+            db.delete(TABLENAME,selection,selectionargs);
+            return null;
+        }
+    }
 
     public class AddEntry extends AsyncTask<ContentValues,Void,Long>{
 
