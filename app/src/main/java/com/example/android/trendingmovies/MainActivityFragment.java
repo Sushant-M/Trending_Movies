@@ -3,6 +3,9 @@ package com.example.android.trendingmovies;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -13,6 +16,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.content.CursorLoader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -25,6 +29,8 @@ import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import com.example.android.trendingmovies.data.MovieContract;
+import com.example.android.trendingmovies.data.MovieDatabase;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -43,6 +49,16 @@ import java.net.URL;
  */
 public class MainActivityFragment extends Fragment {
 
+    String[] MovieName = new String[50];
+    String[] MovieID = new String[50];
+    String[] MoviePoster = new String[50];
+    String[] MovieRelease = new String[50];
+    String[] MovieRating = new String[50];
+    String[] MovieReview = new String[50];
+    String[] MovieSynopsis = new String[50];
+    String[] MovieLink = new String[50];
+
+
     GridView gridView;
     public MainActivityFragment() {
     }
@@ -59,6 +75,8 @@ public class MainActivityFragment extends Fragment {
     public void updateMovies(){
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String value = sharedPreferences.getString("sort_movie","popular");
+        new ReadFromDatabase().execute(null,null,null);
+
         new getMovies().execute(value);
     }
 
@@ -66,7 +84,6 @@ public class MainActivityFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-
     }
 
     @Override
@@ -155,9 +172,7 @@ public class MainActivityFragment extends Fragment {
 
             String[] temp_data = new String[0];
 
-
             try{
-
                 final String baseQuery = "http://api.themoviedb.org/3";
                 final String movies = "movie";
                 final String api_param = "api_key";
@@ -304,5 +319,66 @@ public class MainActivityFragment extends Fragment {
         return MovieID;
     }
 
+
+    public class ReadFromDatabase extends AsyncTask<Void,Void,Void>{
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+
+            SQLiteOpenHelper mOpenHelper = new MovieDatabase(getContext());
+            SQLiteDatabase db = mOpenHelper.getReadableDatabase();
+
+            String[] projection = {
+                    MovieContract._ID,
+                    MovieContract.COLUMN_MOVIE_NAME,
+                    MovieContract.COLUMN_MOVIE_POSTER,
+                    MovieContract.COLUMN_MOVIE_RATING,
+                    MovieContract.COLUMN_MOVIE_RELEASE,
+                    MovieContract.COLUMN_YOUTUBE_LINK,
+                    MovieContract.COLUMN_MOVIE_REVIEW,
+                    MovieContract.COLUMN_MOVIE_ID,
+                    MovieContract.COLUMN_SYNOPSIS
+            };
+            String sortOrder = MovieContract.COLUMN_MOVIE_NAME + " DESC";
+
+            Cursor cursor = db.query(
+                    MovieContract.TABLE_NAME,
+                    projection,
+                    null,
+                    null,
+                    null,
+                    null,
+                    sortOrder
+            );
+
+            if(cursor != null) {
+
+                cursor.moveToFirst();
+                long itemid = cursor.getCount();
+
+                Log.d(TAG, Long.toString(itemid));
+
+
+                for (int i = 0; i < itemid; i++) {
+                    MovieName[i] = cursor.getString(1);
+                    MoviePoster[i] = cursor.getString(2);
+                    MovieRating[i] = cursor.getString(3);
+                    MovieReview[i] = cursor.getString(4);
+                    MovieSynopsis[i] = cursor.getString(5);
+                    MovieLink[i] = cursor.getString(6);
+                    MovieRelease[i] = cursor.getString(7);
+                    MovieID[i] = cursor.getString(8);
+                    cursor.moveToNext();
+                }
+            }
+            return null;
+        }
+    }
 
 }

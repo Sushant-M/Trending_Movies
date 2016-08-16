@@ -15,4 +15,5 @@ public class MovieContract implements BaseColumns {
     public static final String COLUMN_SYNOPSIS = "synopsis";
     public static final String COLUMN_MOVIE_RELEASE = "release";
     public static final String COLUMN_MOVIE_ID = "movieid";
+
 }

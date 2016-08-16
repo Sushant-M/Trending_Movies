@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
@@ -66,6 +67,10 @@ public class DetailActivity extends AppCompatActivity {
         Movie_Rating = bundle.getString("rating");
         MovieID = bundle.getString("id");
 
+        String fav_value = null;
+        new CheckIfDataIsPresent().execute(MovieID,null,fav_value);
+
+
         contentValues.put(MovieContract.COLUMN_MOVIE_NAME,Title);
         contentValues.put(MovieContract.COLUMN_MOVIE_POSTER,Image_Path);
         contentValues.put(MovieContract.COLUMN_MOVIE_RATING,Movie_Rating);
@@ -84,8 +89,6 @@ public class DetailActivity extends AppCompatActivity {
 
         String gottenreview = null;
         new GetReview().execute(MovieID,null,gottenreview);
-
-
 
         new GetYoutubeLink().execute(MovieID);
 
@@ -110,14 +113,15 @@ public class DetailActivity extends AppCompatActivity {
     public void toggleFav(View view){
         TextView textView = (TextView)findViewById(R.id.toggle);
 
+
         toggle_bool = !toggle_bool;
         if(toggle_bool == true){
-            textView.setText("True");
+            textView.setText("In Favorite");
             //add entry to database
             new AddEntry().execute(contentValues);
 
         }else if(toggle_bool == false){
-            textView.setText("False");
+            textView.setText("Not in Favorite");
             //delete entry from database
             new DeleteEntry().execute(MovieID);
         }
@@ -218,16 +222,13 @@ public class DetailActivity extends AppCompatActivity {
         }
     }
 
-
-
-
-
-
     public class GetYoutubeLink extends AsyncTask<String,Void,String>{
 
         @Override
         protected void onPostExecute(String s) {
+            new ModifyYoutubeLink().execute(s);
             super.onPostExecute(s);
+
         }
 
         @Override
@@ -349,6 +350,44 @@ public class DetailActivity extends AppCompatActivity {
             );
             Log.d(TAG,Long.toString(number));
             return number;
+        }
+    }
+    public class ModifyYoutubeLink extends AsyncTask<String,Void,Void>{
+        @Override
+        protected Void doInBackground(String... params) {
+            ContentValues values = new ContentValues();
+            values.put(MovieContract.COLUMN_YOUTUBE_LINK,params[0]);
+            SQLiteOpenHelper mHelper = new MovieDatabase(getApplicationContext());
+            SQLiteDatabase db = mHelper.getWritableDatabase();
+            String selection = MovieContract.COLUMN_MOVIE_ID + " LIKE ?";
+            db.update(
+                    MovieContract.TABLE_NAME,
+                    contentValues,
+                    selection,
+                    null
+            );
+            return null;
+        }
+    }
+    public class CheckIfDataIsPresent extends AsyncTask<String,Void,String>{
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            TextView textView = (TextView)findViewById(R.id.toggle);
+            textView.setText(s);
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            SQLiteOpenHelper mHelper = new MovieDatabase(getApplicationContext());
+            SQLiteDatabase db = mHelper.getWritableDatabase();
+            String query = "SELECT * FROM " + MovieContract.TABLE_NAME + " WHERE " + MovieContract.COLUMN_MOVIE_ID + " = " + params[0];
+            Cursor cursor = db.rawQuery(query,null);
+            if(cursor.getCount()<=0){
+                return "Not in Favorite";
+            }
+            cursor.close();
+            return "In Favorite";
         }
     }
 }
