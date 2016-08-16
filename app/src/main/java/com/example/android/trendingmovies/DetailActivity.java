@@ -48,6 +48,7 @@ public class DetailActivity extends AppCompatActivity {
     String Movie_Release;
     String Movie_Rating;
     String MovieID;
+    String youtube;
     ContentValues contentValues =  new ContentValues();
 
     @Override
@@ -66,20 +67,35 @@ public class DetailActivity extends AppCompatActivity {
         Movie_Release = bundle.getString("release");
         Movie_Rating = bundle.getString("rating");
         MovieID = bundle.getString("id");
+        String check = bundle.getString("favorite");
+        String toCompare = new String("false");
 
-        String fav_value = null;
-        new CheckIfDataIsPresent().execute(MovieID,null,fav_value);
+        if(check.equals(toCompare)) {
+            String fav_value = null;
+            new CheckIfDataIsPresent().execute(MovieID, null, fav_value);
 
 
-        contentValues.put(MovieContract.COLUMN_MOVIE_NAME,Title);
-        contentValues.put(MovieContract.COLUMN_MOVIE_POSTER,Image_Path);
-        contentValues.put(MovieContract.COLUMN_MOVIE_RATING,Movie_Rating);
-        // to be added later contentValues.put(MovieContract.COLUMN_MOVIE_REVIEW,"review goes here");
-        contentValues.put(MovieContract.COLUMN_SYNOPSIS,Movie_OverView);
-        //to be added later contentValues.put(MovieContract.COLUMN_YOUTUBE_LINK,tempdata);
-        contentValues.put(MovieContract.COLUMN_MOVIE_RELEASE,Movie_Release);
-        contentValues.put(MovieContract.COLUMN_MOVIE_ID,MovieID);
+            contentValues.put(MovieContract.COLUMN_MOVIE_NAME,Title);
+            contentValues.put(MovieContract.COLUMN_MOVIE_POSTER,Image_Path);
+            contentValues.put(MovieContract.COLUMN_MOVIE_RATING,Movie_Rating);
+            // to be added later contentValues.put(MovieContract.COLUMN_MOVIE_REVIEW,"review goes here");
+            contentValues.put(MovieContract.COLUMN_SYNOPSIS,Movie_OverView);
+            //to be added later contentValues.put(MovieContract.COLUMN_YOUTUBE_LINK,tempdata);
+            contentValues.put(MovieContract.COLUMN_MOVIE_RELEASE,Movie_Release);
+            contentValues.put(MovieContract.COLUMN_MOVIE_ID,MovieID);
 
+            String gottenreview = null;
+
+            new GetReview().execute(MovieID,null,gottenreview);
+
+            new GetYoutubeLink().execute(MovieID);
+
+            String review = bundle.getString("review");
+            TextView text = (TextView)findViewById(R.id.review_textview);
+            text.setText(review);
+
+
+        }
 
         ImageView imageView = (ImageView)findViewById(R.id.movieImage);
         TextView movie_title = (TextView)findViewById(R.id.movie_title);
@@ -87,10 +103,8 @@ public class DetailActivity extends AppCompatActivity {
         TextView movie_overview = (TextView)findViewById(R.id.movie_OverView);
         TextView movie_rating = (TextView)findViewById(R.id.movie_rating);
 
-        String gottenreview = null;
-        new GetReview().execute(MovieID,null,gottenreview);
 
-        new GetYoutubeLink().execute(MovieID);
+
 
         Context context = getApplicationContext();
         final String BASE_URL = "http://image.tmdb.org/t/p/.";
@@ -108,6 +122,8 @@ public class DetailActivity extends AppCompatActivity {
         movie_release.setText("Release Date: "+Movie_Release);
         movie_overview.setText("Synopsis: "+Movie_OverView);
         movie_rating.setText("Rating: "+Movie_Rating);
+
+
     }
 
     public void toggleFav(View view){
@@ -130,6 +146,13 @@ public class DetailActivity extends AppCompatActivity {
 
     public void launchYoutube(View view) {
 
+        Intent thisintent = this.getIntent();
+        Bundle bundle = thisintent.getExtras();
+
+        String toCheck = bundle.getString("favorite");
+        String toCompare = new String("flase");
+
+        if(toCheck.equals(toCompare)){
         try {
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube.com:" + tempdata));
             startActivity(intent);
@@ -137,6 +160,18 @@ public class DetailActivity extends AppCompatActivity {
             Intent intent = new Intent(Intent.ACTION_VIEW,
                     Uri.parse("http://www.youtube.com/watch?v=" + tempdata));
             startActivity(intent);
+        }
+        return;
+        }
+        else {
+            try {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube.com:" + youtube));
+                startActivity(intent);
+            } catch (ActivityNotFoundException ex) {
+                Intent intent = new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("http://www.youtube.com/watch?v=" + youtube));
+                startActivity(intent);
+            }
         }
 
     }

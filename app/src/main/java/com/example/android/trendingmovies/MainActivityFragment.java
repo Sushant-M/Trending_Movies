@@ -75,8 +75,12 @@ public class MainActivityFragment extends Fragment {
     public void updateMovies(){
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String value = sharedPreferences.getString("sort_movie","popular");
-        new ReadFromDatabase().execute(null,null,null);
 
+        String toCompare = new String("favorites");
+        if(value.equals(toCompare)) {
+            new ReadFromDatabase().execute(null, null, null);
+            return;
+        }
         new getMovies().execute(value);
     }
 
@@ -129,13 +133,39 @@ public class MainActivityFragment extends Fragment {
                 String title = "title";
                 String rating = "rating";
                 String ID = "id";
+                String Fav = "favorite";
+                String Review = "review";
+                String youtube = "youtube";
 
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                String value = sharedPreferences.getString("sort_movie","popular");
+                String fav = new String("favorites");
+                Log.d(TAG,value);
+                if(value.equals(fav)) {
+                    bundle.putString(im, MoviePoster[position]);
+                    bundle.putString(over, MovieSynopsis[position]);
+                    bundle.putString(rel, MovieRelease[position]);
+                    bundle.putString(title, MovieName[position]);
+                    bundle.putString(rating, MovieRating[position]);
+                    bundle.putString(ID, MovieID[position]);
+                    bundle.putString(Review,MovieReview[position]);
+                    bundle.putString(youtube,MovieLink[position]);
+
+                    bundle.putString(Fav,"true");
+
+                    Intent intent = new Intent(getActivity(),DetailActivity.class);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                    return;
+                }else
                 bundle.putString(im,parsedData[position]);
                 bundle.putString(over,movieOverViewToSend[position]);
                 bundle.putString(rel,movieReleaseDate[position]);
                 bundle.putString(title,movieTitleToSend[position]);
                 bundle.putString(rating,movieRating[position]);
                 bundle.putString(ID,movieID[position]);
+                bundle.putString(Fav,"false");
+
                 Intent intent = new Intent(getActivity(),DetailActivity.class);
                 intent.putExtras(bundle);
                 startActivity(intent);
@@ -325,7 +355,7 @@ public class MainActivityFragment extends Fragment {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-
+            gridView.setAdapter(new ImageAdapter(getActivity(),MoviePoster));
         }
 
         @Override
