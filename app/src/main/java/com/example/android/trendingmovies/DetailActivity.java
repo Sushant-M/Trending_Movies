@@ -397,7 +397,7 @@ public class DetailActivity extends AppCompatActivity {
             String selection = MovieContract.COLUMN_MOVIE_ID + " LIKE ?";
             db.update(
                     MovieContract.TABLE_NAME,
-                    contentValues,
+                    values,
                     selection,
                     null
             );

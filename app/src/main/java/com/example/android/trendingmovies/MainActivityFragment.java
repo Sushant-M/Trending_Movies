@@ -1,5 +1,6 @@
 package com.example.android.trendingmovies;
 
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,6 +17,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.CursorLoader;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -126,7 +128,7 @@ public class MainActivityFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Bundle bundle = new Bundle();
-
+                MovieInformation movieInformation = (MovieInformation)getFragmentManager().findFragmentById(R.id.movie_fragment);
                 String im = "image";
                 String over = "overview";
                 String rel = "release";
@@ -153,10 +155,14 @@ public class MainActivityFragment extends Fragment {
 
                     bundle.putString(Fav,"true");
 
-                    Intent intent = new Intent(getActivity(),DetailActivity.class);
-                    intent.putExtras(bundle);
-                    startActivity(intent);
-                    return;
+                    if(movieInformation == null){
+                        Intent intent = new Intent(getActivity(),DetailActivity.class);
+                        intent.putExtras(bundle);
+                        startActivity(intent);
+                        return;
+                    }
+                    //TODO add code to update fragment
+
                 }else
                 bundle.putString(im,parsedData[position]);
                 bundle.putString(over,movieOverViewToSend[position]);
@@ -166,9 +172,14 @@ public class MainActivityFragment extends Fragment {
                 bundle.putString(ID,movieID[position]);
                 bundle.putString(Fav,"false");
 
-                Intent intent = new Intent(getActivity(),DetailActivity.class);
-                intent.putExtras(bundle);
-                startActivity(intent);
+                if(movieInformation == null){
+                    Intent intent = new Intent(getActivity(),DetailActivity.class);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                    return;
+                }
+                //TODO add code to update fragment
+                movieInformation.updateInformation(bundle);
             }
         });
 
