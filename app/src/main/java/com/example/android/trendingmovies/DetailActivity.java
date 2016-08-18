@@ -38,6 +38,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class DetailActivity extends AppCompatActivity {
+    final String APIKEY = "key goes here";
     String youTubeURL = null;
     String tempdata = null;
     final String TAG="DetailActivity";
@@ -102,9 +103,9 @@ public class DetailActivity extends AppCompatActivity {
         TextView movie_release = (TextView)findViewById(R.id.movie_release);
         TextView movie_overview = (TextView)findViewById(R.id.movie_OverView);
         TextView movie_rating = (TextView)findViewById(R.id.movie_rating);
-
-
-
+        TextView movie_review = (TextView)findViewById(R.id.review_textview);
+        String review = bundle.getString("review");
+        String synopsis = bundle.getString("overview");
 
         Context context = getApplicationContext();
         final String BASE_URL = "http://image.tmdb.org/t/p/.";
@@ -120,8 +121,9 @@ public class DetailActivity extends AppCompatActivity {
 
         movie_title.setText("Title: "+Title);
         movie_release.setText("Release Date: "+Movie_Release);
-        movie_overview.setText("Synopsis: "+Movie_OverView);
+        movie_overview.setText("Synopsis: "+synopsis);
         movie_rating.setText("Rating: "+Movie_Rating);
+        movie_review.setText("Review: " + review);
 
 
     }
@@ -182,6 +184,7 @@ public class DetailActivity extends AppCompatActivity {
             super.onPostExecute(s);
             TextView movie_review = (TextView)findViewById(R.id.review_textview);
             movie_review.setText(s);
+            contentValues.put(MovieContract.COLUMN_MOVIE_REVIEW,s);
         }
 
         @Override
@@ -195,7 +198,6 @@ public class DetailActivity extends AppCompatActivity {
                 final String MOVIES = "movie";
                 final String REVIEW = "reviews";
                 final String APIPARAM = "api_key";
-                final String APIKEY = "fc53fdb027975aaacc7595aeb259107d";
                 String movID = params[0];
 
                 Uri builtUri = Uri.parse(BASEURL).buildUpon()
@@ -276,7 +278,7 @@ public class DetailActivity extends AppCompatActivity {
                 final String MOVIES = "movie";
                 final String VIDEOS = "videos";
                 final String APIPARAM = "api_key";
-                final String APIKEY = "fc53fdb027975aaacc7595aeb259107d";
+
                 String movID = params[0];
 
                 Uri builtUri = Uri.parse(BASEURL).buildUpon()

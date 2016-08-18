@@ -44,6 +44,7 @@ import java.net.URL;
  * create an instance of this fragment.
  */
 public class MovieInformation extends Fragment {
+    final String APIKEY = "key goes here";
     final static String TAG = "MOVIEINFORMATION";
     String youTubeURL = null;
     String tempdata = null;
@@ -267,7 +268,7 @@ public class MovieInformation extends Fragment {
                 final String MOVIES = "movie";
                 final String VIDEOS = "videos";
                 final String APIPARAM = "api_key";
-                final String APIKEY = "fc53fdb027975aaacc7595aeb259107d";
+
                 String movID = params[0];
 
                 Uri builtUri = Uri.parse(BASEURL).buildUpon()
@@ -402,7 +403,6 @@ public class MovieInformation extends Fragment {
                 final String MOVIES = "movie";
                 final String REVIEW = "reviews";
                 final String APIPARAM = "api_key";
-                final String APIKEY = "fc53fdb027975aaacc7595aeb259107d";
                 String movID = params[0];
 
                 Uri builtUri = Uri.parse(BASEURL).buildUpon()
