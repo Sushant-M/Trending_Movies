@@ -49,7 +49,7 @@ import java.net.URL;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends Fragment {
+public class MainActivityFragment extends Fragment implements SharedPreferences.OnSharedPreferenceChangeListener{
 
     String[] MovieName = new String[50];
     String[] MovieID = new String[50];
@@ -96,6 +96,7 @@ public class MainActivityFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        PreferenceManager.getDefaultSharedPreferences(getContext()).registerOnSharedPreferenceChangeListener(this);
     }
 
     @Override
@@ -110,9 +111,6 @@ public class MainActivityFragment extends Fragment {
         if(id == R.id.action_settings1){
             Intent intent = new Intent(getActivity(),SettingsActivity.class);
             startActivity(intent);
-        }
-        if(id == R.id.action_refresh){
-            updateMovies();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -186,6 +184,11 @@ public class MainActivityFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        updateMovies();
+    }
+
     public class getMovies extends AsyncTask<String, Void , String[]>{
 
         @Override
@@ -219,7 +222,7 @@ public class MainActivityFragment extends Fragment {
                 final String movies = "movie";
                 final String api_param = "api_key";
                 //Insert your API key here.
-                final String API_KEY ="" ;
+                final String API_KEY ="fc53fdb027975aaacc7595aeb259107d" ;
 
                 String type = params[0];
 

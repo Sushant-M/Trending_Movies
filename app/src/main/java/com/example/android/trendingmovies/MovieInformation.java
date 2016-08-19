@@ -44,7 +44,7 @@ import java.net.URL;
  * create an instance of this fragment.
  */
 public class MovieInformation extends Fragment {
-    final String APIKEY = "";
+    final String APIKEY = "fc53fdb027975aaacc7595aeb259107d";
     final static String TAG = "MOVIEINFORMATION";
     String youTubeURL = null;
     String tempdata = null;
