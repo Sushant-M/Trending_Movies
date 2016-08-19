@@ -49,14 +49,17 @@ public class ImageAdapter extends BaseAdapter {
 
         final String BASE_URL = "http://image.tmdb.org/t/p/.";
         final String SIZE_POSTER = "w185";
-        final String POSTER_URL = parsedlist[position];
-        Uri url = Uri.parse(BASE_URL)
-                .buildUpon()
-                .appendEncodedPath(SIZE_POSTER)
-                .appendEncodedPath(POSTER_URL)
-                .build();
-        Picasso.with(mContext).load(url).into(imageView);
-        return imageView;
+        if(parsedlist != null) {
+            final String POSTER_URL = parsedlist[position];
+            Uri url = Uri.parse(BASE_URL)
+                    .buildUpon()
+                    .appendEncodedPath(SIZE_POSTER)
+                    .appendEncodedPath(POSTER_URL)
+                    .build();
+            Picasso.with(mContext).load(url).into(imageView);
+            return imageView;
+        }
+        return null;
     }
 
 }

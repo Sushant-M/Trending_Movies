@@ -44,7 +44,7 @@ import java.net.URL;
  * create an instance of this fragment.
  */
 public class MovieInformation extends Fragment {
-    final String APIKEY = "key goes here";
+    final String APIKEY = "fc53fdb027975aaacc7595aeb259107d";
     final static String TAG = "MOVIEINFORMATION";
     String youTubeURL = null;
     String tempdata = null;
@@ -195,6 +195,12 @@ public class MovieInformation extends Fragment {
 
         check = bundle.getString("favorite");
         String toCompare = new String("false");
+        if(check.equals(toCompare)){
+            Button btn = (Button)getView().findViewById(R.id.favorite);
+            btn.setText("Not in Favorite");
+        }
+        Button btn = (Button)getView().findViewById(R.id.favorite);
+        btn.setText("In Favorite");
 
         TextView titletext = (TextView)getView().findViewById(R.id.movietitle);
         titletext.setText(Title);
@@ -330,12 +336,15 @@ public class MovieInformation extends Fragment {
     public String parseYoutubePath() throws JSONException {
         String list = "results";
         String id = "key";
-        JSONObject moviesOBJ = new JSONObject(youTubeURL);
-        JSONArray movieArr = moviesOBJ.getJSONArray(list);
-        int i =0;
-        JSONObject obj = movieArr.getJSONObject(i);
-        String posterparse = obj.getString(id);
-        return posterparse;
+        if(youTubeURL != null) {
+            JSONObject moviesOBJ = new JSONObject(youTubeURL);
+            JSONArray movieArr = moviesOBJ.getJSONArray(list);
+            int i = 0;
+            JSONObject obj = movieArr.getJSONObject(i);
+            String posterparse = obj.getString(id);
+            return posterparse;
+        }
+        return null;
     }
 
     public class ModifyYoutubeLink extends AsyncTask<String,Void,Void>{
@@ -466,12 +475,15 @@ public class MovieInformation extends Fragment {
     public String parseReview(String json) throws JSONException{
         String list = "results";
         String id = "content";
-        JSONObject moviesOBJ = new JSONObject(json);
-        JSONArray movieArr = moviesOBJ.getJSONArray(list);
-        int i = 0;
-        JSONObject obj = movieArr.getJSONObject(i);
-        String review = obj.getString(id);
-        return review;
+        if(json != null) {
+            JSONObject moviesOBJ = new JSONObject(json);
+            JSONArray movieArr = moviesOBJ.getJSONArray(list);
+            int i = 0;
+            JSONObject obj = movieArr.getJSONObject(i);
+            String review = obj.getString(id);
+            return review;
+        }
+        return null;
     }
     /**
      * This interface must be implemented by activities that contain this

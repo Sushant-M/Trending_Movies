@@ -38,7 +38,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class DetailActivity extends AppCompatActivity {
-    final String APIKEY = "key goes here";
+    final String APIKEY = "fc53fdb027975aaacc7595aeb259107d";
     String youTubeURL = null;
     String tempdata = null;
     final String TAG="DetailActivity";
@@ -72,16 +72,13 @@ public class DetailActivity extends AppCompatActivity {
         String toCompare = new String("false");
 
         if(check.equals(toCompare)) {
-            String fav_value = null;
-            new CheckIfDataIsPresent().execute(MovieID, null, fav_value);
-
-
+            toggle_bool = false;
             contentValues.put(MovieContract.COLUMN_MOVIE_NAME,Title);
             contentValues.put(MovieContract.COLUMN_MOVIE_POSTER,Image_Path);
             contentValues.put(MovieContract.COLUMN_MOVIE_RATING,Movie_Rating);
-            // to be added later contentValues.put(MovieContract.COLUMN_MOVIE_REVIEW,"review goes here");
+            contentValues.put(MovieContract.COLUMN_MOVIE_REVIEW,"review goes here");
             contentValues.put(MovieContract.COLUMN_SYNOPSIS,Movie_OverView);
-            //to be added later contentValues.put(MovieContract.COLUMN_YOUTUBE_LINK,tempdata);
+            contentValues.put(MovieContract.COLUMN_YOUTUBE_LINK,"youtube link");
             contentValues.put(MovieContract.COLUMN_MOVIE_RELEASE,Movie_Release);
             contentValues.put(MovieContract.COLUMN_MOVIE_ID,MovieID);
 
@@ -95,8 +92,14 @@ public class DetailActivity extends AppCompatActivity {
             TextView text = (TextView)findViewById(R.id.review_textview);
             text.setText(review);
 
+            Button favb = (Button)findViewById(R.id.toggleButton);
+            favb.setText("Not in Fav");
 
         }
+        toggle_bool = true;
+        String fav_value = null;
+        Log.d(TAG,MovieID);
+        new CheckIfDataIsPresent().execute(MovieID, null, fav_value);
 
         ImageView imageView = (ImageView)findViewById(R.id.movieImage);
         TextView movie_title = (TextView)findViewById(R.id.movie_title);
@@ -124,7 +127,8 @@ public class DetailActivity extends AppCompatActivity {
         movie_overview.setText("Synopsis: "+synopsis);
         movie_rating.setText("Rating: "+Movie_Rating);
         movie_review.setText("Review: " + review);
-
+        Button favb = (Button)findViewById(R.id.toggleButton);
+        favb.setText("In Favorite");
 
     }
 
