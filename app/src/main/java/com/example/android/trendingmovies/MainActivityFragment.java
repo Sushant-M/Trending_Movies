@@ -97,7 +97,9 @@ public class MainActivityFragment extends Fragment implements SharedPreferences.
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         PreferenceManager.getDefaultSharedPreferences(getContext()).registerOnSharedPreferenceChangeListener(this);
+        setRetainInstance(true);
     }
+
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
