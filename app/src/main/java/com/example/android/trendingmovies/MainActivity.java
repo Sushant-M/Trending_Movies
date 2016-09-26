@@ -5,7 +5,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -14,6 +17,7 @@ import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity implements MovieInformation.OnFragmentInteractionListener{
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -21,6 +25,42 @@ public class MainActivity extends AppCompatActivity implements MovieInformation.
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
     }
+
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+       /* FragmentManager manager = getSupportFragmentManager();
+        Fragment myMainFrag = getSupportFragmentManager().findFragmentById(R.id.movies_gridview);
+        Fragment mMovieInfo = getSupportFragmentManager().findFragmentById(R.id.movie_fragment);
+        manager.putFragment(outState,MainActivityFragment.TAG,myMainFrag);
+        manager.putFragment(outState,MovieInformation.TAG,mMovieInfo);*/
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+       // instantiateFragments(savedInstanceState);
+    }
+
+   /* private void instantiateFragments(Bundle inState) {
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        MainActivityFragment mMyFragment;
+        MovieInformation mMovieInfo;
+        if (inState != null) {
+            mMyFragment = (MainActivityFragment) manager.getFragment(inState, MainActivityFragment.TAG);
+            mMovieInfo = (MovieInformation)manager.getFragment(inState,MovieInformation.TAG);
+        } else {
+            mMyFragment = new MainActivityFragment();
+            mMovieInfo = new MovieInformation();
+            transaction.add(R.id.movies_gridview, mMyFragment, MainActivityFragment.TAG);
+            transaction.add(R.id.movie_fragment, mMovieInfo,MovieInformation.TAG);
+            transaction.commit();
+        }
+    }*/
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

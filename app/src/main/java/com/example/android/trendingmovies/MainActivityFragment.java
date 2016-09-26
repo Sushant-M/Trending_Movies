@@ -59,7 +59,7 @@ public class MainActivityFragment extends Fragment implements SharedPreferences.
     String[] MovieReview = new String[50];
     String[] MovieSynopsis = new String[50];
     String[] MovieLink = new String[50];
-
+    int position_scroll;
 
     GridView gridView;
     public MainActivityFragment() {
@@ -99,6 +99,18 @@ public class MainActivityFragment extends Fragment implements SharedPreferences.
         PreferenceManager.getDefaultSharedPreferences(getContext()).registerOnSharedPreferenceChangeListener(this);
     }
 
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putStringArray("title",movieTitleToSend);
+        outState.putStringArray("overview",movieOverViewToSend);
+        outState.putStringArray("release",movieReleaseDate);
+        outState.putStringArray("rating",movieRating);
+        outState.putStringArray("id",movieID);
+        outState.putStringArray("tiles",parsedData);
+        super.onSaveInstanceState(outState);
+    }
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
@@ -118,13 +130,18 @@ public class MainActivityFragment extends Fragment implements SharedPreferences.
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         updateMovies();
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         gridView = (GridView) rootView.findViewById(R.id.movies_gridview);
+        if(savedInstanceState !=null){
+            gridView.setAdapter(new ImageAdapter(getActivity(),savedInstanceState.getStringArray("tiles")));
+        }
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                position_scroll = position;
                 Bundle bundle = new Bundle();
                 MovieInformation movieInformation = (MovieInformation)getFragmentManager().findFragmentById(R.id.movie_fragment);
                 String im = "image";
@@ -180,6 +197,7 @@ public class MainActivityFragment extends Fragment implements SharedPreferences.
                 movieInformation.updateInformation(bundle);
             }
         });
+
 
         return rootView;
     }

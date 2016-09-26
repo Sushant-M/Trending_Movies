@@ -46,6 +46,13 @@ import java.net.URL;
 public class MovieInformation extends Fragment {
     final String APIKEY = "fc53fdb027975aaacc7595aeb259107d";
     final static String TAG = "MOVIEINFORMATION";
+
+    String Title;
+    String Movie_OverView;
+    String Movie_Release;
+    String Movie_Rating;
+    String Image_Path;
+
     String youTubeURL = null;
     String tempdata = null;
     String check = null;
@@ -101,6 +108,42 @@ public class MovieInformation extends Fragment {
         View view = inflater.inflate(R.layout.fragment_movie_information, container, false);
         Button launch = (Button)view.findViewById(R.id.trailerbutton);
         final Button fav = (Button)view.findViewById(R.id.favorite);
+
+        if(savedInstanceState !=null){
+
+            String title,rating,release,overview, image_p;
+            title = savedInstanceState.getString("title");
+            rating = savedInstanceState.getString("rating");
+            release = savedInstanceState.getString("release");
+            overview = savedInstanceState.getString("overview");
+            image_p = savedInstanceState.getString("image");
+
+            TextView titletext = (TextView)getView().findViewById(R.id.movietitle);
+            titletext.setText(title);
+
+            TextView ratingtext = (TextView)getView().findViewById(R.id.rating);
+            ratingtext.setText(rating);
+
+            TextView datetext = (TextView)getView().findViewById(R.id.date);
+            datetext.setText(release);
+
+            TextView synopsistext = (TextView)getView().findViewById(R.id.synposis);
+            synopsistext.setText(overview);
+
+            ImageView posterimg = (ImageView)getView().findViewById(R.id.image);
+
+            Context context = getContext();
+            final String BASE_URL = "http://image.tmdb.org/t/p/.";
+            final String SIZE_POSTER = "w185";
+            final String POSTER_URL = image_p;
+            Uri url = Uri.parse(BASE_URL)
+                    .buildUpon()
+                    .appendEncodedPath(SIZE_POSTER)
+                    .appendEncodedPath(POSTER_URL)
+                    .build();
+
+            Picasso.with(context).load(url).into(posterimg);
+        }
 
         fav.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -186,11 +229,21 @@ public class MovieInformation extends Fragment {
         }
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString("title",Title);
+        outState.putString("overview",Movie_OverView);
+        outState.putString("release",Movie_Release);
+        outState.putString("rating",Movie_Rating);
+        outState.putString("image",Image_Path);
+        super.onSaveInstanceState(outState);
+    }
+
     public void updateInformation(Bundle bundle){
-        String Title = bundle.getString("title");
-        String Movie_OverView = bundle.getString("overview");
-        String Movie_Release = bundle.getString("release");
-        String Movie_Rating = bundle.getString("rating");
+        Title = bundle.getString("title");
+        Movie_OverView = bundle.getString("overview");
+        Movie_Release = bundle.getString("release");
+        Movie_Rating = bundle.getString("rating");
         MovieID = bundle.getString("id");
 
         check = bundle.getString("favorite");
@@ -214,7 +267,7 @@ public class MovieInformation extends Fragment {
         TextView synopsistext = (TextView)getView().findViewById(R.id.synposis);
         synopsistext.setText(Movie_OverView);
 
-        String Image_Path = bundle.getString("image");
+        Image_Path = bundle.getString("image");
 
         ImageView posterimg = (ImageView)getView().findViewById(R.id.image);
 

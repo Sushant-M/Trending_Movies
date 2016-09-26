@@ -50,7 +50,10 @@ public class DetailActivity extends AppCompatActivity {
     String Movie_Rating;
     String MovieID;
     String youtube;
+    String review;
+    String synopsis;
     ContentValues contentValues =  new ContentValues();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +61,46 @@ public class DetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+
+        if(savedInstanceState !=null){
+            ImageView imageView = (ImageView)findViewById(R.id.movieImage);
+            TextView movie_title = (TextView)findViewById(R.id.movie_title);
+            TextView movie_release = (TextView)findViewById(R.id.movie_release);
+            TextView movie_overview = (TextView)findViewById(R.id.movie_OverView);
+            TextView movie_rating = (TextView)findViewById(R.id.movie_rating);
+            TextView movie_review = (TextView)findViewById(R.id.review_textview);
+
+            String title = savedInstanceState.getString("Title");
+            String review = savedInstanceState.getString("Review");
+            String rating = savedInstanceState.getString("Rating");
+            String synopsis = savedInstanceState.getString("Synopsis");
+            String release = savedInstanceState.getString("Release_date");
+            String image = savedInstanceState.getString("url");
+
+            movie_overview.setText(synopsis);
+            movie_rating.setText(rating);
+            movie_release.setText(release);
+            movie_review.setText(review);
+            movie_title.setText(title);
+
+            Context context = getApplicationContext();
+            final String BASE_URL = "http://image.tmdb.org/t/p/.";
+            final String SIZE_POSTER = "w185";
+            final String POSTER_URL = image;
+            Uri url = Uri.parse(BASE_URL)
+                    .buildUpon()
+                    .appendEncodedPath(SIZE_POSTER)
+                    .appendEncodedPath(POSTER_URL)
+                    .build();
+
+            Picasso.with(context).load(url).into(imageView);
+
+            return;
+
+        }
+
+
 
         Intent intent = this.getIntent();
         Bundle bundle = intent.getExtras();
@@ -130,6 +173,17 @@ public class DetailActivity extends AppCompatActivity {
         Button favb = (Button)findViewById(R.id.toggleButton);
         favb.setText("In Favorite");
 
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString("url",Image_Path);
+        outState.putString("Title",Title);
+        outState.putString("Release_date",Movie_Release);
+        outState.putString("Synopsis",synopsis);
+        outState.putString("Rating",Movie_Rating);
+        outState.putString("Review",review);
+        super.onSaveInstanceState(outState);
     }
 
     public void toggleFav(View view){
