@@ -56,8 +56,32 @@ public class DetailActivity extends AppCompatActivity {
 
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("title",Title);
+        outState.putString("poster",Image_Path);
+        outState.putString("overview",Movie_OverView);
+        outState.putString("release",Movie_Release);
+        outState.putString("rating",Movie_Rating);
+        outState.putString("id",MovieID);
+        outState.putString("youtube",youtube);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        Title = savedInstanceState.getString("title");
+        Image_Path = savedInstanceState.getString("poster");
+        Movie_OverView = savedInstanceState.getString("release");
+        Movie_Rating = savedInstanceState.getString("rating");
+        MovieID = savedInstanceState.getString("id");
+        youtube = savedInstanceState.getString("youtube");
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_detail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -399,24 +423,30 @@ public class DetailActivity extends AppCompatActivity {
     public String parseReview(String json) throws JSONException{
         String list = "results";
         String id = "content";
-        JSONObject moviesOBJ = new JSONObject(json);
-        JSONArray movieArr = moviesOBJ.getJSONArray(list);
-        int i = 0;
-        JSONObject obj = movieArr.getJSONObject(i);
-        String review = obj.getString(id);
-        return review;
+        if(json != null) {
+            JSONObject moviesOBJ = new JSONObject(json);
+            JSONArray movieArr = moviesOBJ.getJSONArray(list);
+            int i = 0;
+            JSONObject obj = movieArr.getJSONObject(i);
+            String review = obj.getString(id);
+            return review;
+        }
+        return null;
     }
 
 
     public String parseYoutubePath() throws JSONException {
         String list = "results";
         String id = "key";
-        JSONObject moviesOBJ = new JSONObject(youTubeURL);
-        JSONArray movieArr = moviesOBJ.getJSONArray(list);
-        int i =0;
+        if(youTubeURL !=null) {
+            JSONObject moviesOBJ = new JSONObject(youTubeURL);
+            JSONArray movieArr = moviesOBJ.getJSONArray(list);
+            int i = 0;
             JSONObject obj = movieArr.getJSONObject(i);
             String posterparse = obj.getString(id);
-        return posterparse;
+            return posterparse;
+        }
+        return null;
     }
 
     public class DeleteEntry extends AsyncTask<String,Void,Void>{
