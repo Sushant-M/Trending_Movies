@@ -240,7 +240,7 @@ public class MainActivityFragment extends Fragment implements SharedPreferences.
                 final String movies = "movie";
                 final String api_param = "api_key";
                 //Insert your API key here.
-                final String API_KEY ="fc53fdb027975aaacc7595aeb259107d" ;
+                final String API_KEY ="" ;
 
                 String type = params[0];
 
