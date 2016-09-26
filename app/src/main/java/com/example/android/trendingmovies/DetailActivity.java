@@ -55,7 +55,7 @@ public class DetailActivity extends AppCompatActivity {
     ContentValues contentValues =  new ContentValues();
 
 
-    @Override
+   /* @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString("title",Title);
@@ -65,7 +65,7 @@ public class DetailActivity extends AppCompatActivity {
         outState.putString("rating",Movie_Rating);
         outState.putString("id",MovieID);
         outState.putString("youtube",youtube);
-    }
+    }*/
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {

@@ -92,12 +92,6 @@ public class MovieInformation extends Fragment {
         return fragment;
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        //outState.putString("title");
-
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
